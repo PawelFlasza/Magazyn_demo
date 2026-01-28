@@ -9,13 +9,13 @@ Celem projektu jest pokazanie umiejętności w zakresie:
 
 🏗️ Zakres funkcjonalny
 Model obejmuje kluczowe obszary magazynu:
-| Obszar      |  Opis                                                     | 
-| Products    | Lista produktów, ich kategorie, waga, status aktywności   | 
-| Warehouses  | Dane magazynów i lokalizacji                              | 
-| Stock       | Stany magazynowe per produkt i magazyn                    | 
-| Movements   | Historia ruchów magazynowych (przyjęcia, wydania, korekty)| 
-| Operators   | Pracownicy realizujący zadania                            | 
-| PickingTasks| Zadania kompletacyjne przypisane operatorom               | 
+* Obszar      -  Opis                                                     
+* Products    - Lista produktów, ich kategorie, waga, status aktywności    
+* Warehouses  - Dane magazynów i lokalizacji                               
+* Stock       - Stany magazynowe per produkt i magazyn                     
+* Movements   - Historia ruchów magazynowych (przyjęcia, wydania, korekty) 
+* Operators   - Pracownicy realizujący zadania                            
+* PickingTasks- Zadania kompletacyjne przypisane operatorom                
 
 
 
