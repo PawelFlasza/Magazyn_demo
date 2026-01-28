@@ -1,0 +1,164 @@
+------------------------------------------------------------
+-- USUNIĘCIE TABEL (jeśli istnieją)
+------------------------------------------------------------
+BEGIN
+    EXECUTE IMMEDIATE 'DROP TABLE PickingTasks CASCADE CONSTRAINTS';
+    EXECUTE IMMEDIATE 'DROP TABLE Movements CASCADE CONSTRAINTS';
+    EXECUTE IMMEDIATE 'DROP TABLE Stock CASCADE CONSTRAINTS';
+    EXECUTE IMMEDIATE 'DROP TABLE Operators CASCADE CONSTRAINTS';
+    EXECUTE IMMEDIATE 'DROP TABLE Warehouses CASCADE CONSTRAINTS';
+    EXECUTE IMMEDIATE 'DROP TABLE Products CASCADE CONSTRAINTS';
+EXCEPTION
+    WHEN OTHERS THEN NULL;
+END;
+/
+
+------------------------------------------------------------
+-- TABELA: PRODUCTS
+------------------------------------------------------------
+CREATE TABLE Products (
+    ProductID      NUMBER PRIMARY KEY,
+    Name           VARCHAR2(100) NOT NULL,
+    Category       VARCHAR2(50),
+    Weight         NUMBER(10,2),
+    ActiveFlag     NUMBER(1) CHECK (ActiveFlag IN (0,1))
+);
+
+------------------------------------------------------------
+-- TABELA: WAREHOUSES
+------------------------------------------------------------
+CREATE TABLE Warehouses (
+    WarehouseID    NUMBER PRIMARY KEY,
+    Name           VARCHAR2(100) NOT NULL,
+    City           VARCHAR2(50)
+);
+
+------------------------------------------------------------
+-- TABELA: STOCK
+------------------------------------------------------------
+CREATE TABLE Stock (
+    ProductID      NUMBER NOT NULL,
+    WarehouseID    NUMBER NOT NULL,
+    Quantity       NUMBER NOT NULL,
+    CONSTRAINT pk_stock PRIMARY KEY (ProductID, WarehouseID),
+    CONSTRAINT fk_stock_product FOREIGN KEY (ProductID)
+        REFERENCES Products(ProductID),
+    CONSTRAINT fk_stock_warehouse FOREIGN KEY (WarehouseID)
+        REFERENCES Warehouses(WarehouseID)
+);
+
+------------------------------------------------------------
+-- TABELA: MOVEMENTS
+------------------------------------------------------------
+CREATE TABLE Movements (
+    MovementID     NUMBER PRIMARY KEY,
+    ProductID      NUMBER NOT NULL,
+    WarehouseID    NUMBER NOT NULL,
+    QtyChange      NUMBER NOT NULL,
+    MovementDate   DATE NOT NULL,
+    CONSTRAINT fk_mov_product FOREIGN KEY (ProductID)
+        REFERENCES Products(ProductID),
+    CONSTRAINT fk_mov_warehouse FOREIGN KEY (WarehouseID)
+        REFERENCES Warehouses(WarehouseID)
+);
+
+------------------------------------------------------------
+-- TABELA: OPERATORS
+------------------------------------------------------------
+CREATE TABLE Operators (
+    OperatorID     NUMBER PRIMARY KEY,
+    Name           VARCHAR2(100) NOT NULL,
+    Shift          VARCHAR2(1) CHECK (Shift IN ('A','B','C'))
+);
+
+------------------------------------------------------------
+-- TABELA: PICKINGTASKS
+------------------------------------------------------------
+CREATE TABLE PickingTasks (
+    TaskID         NUMBER PRIMARY KEY,
+    ProductID      NUMBER NOT NULL,
+    OperatorID     NUMBER NOT NULL,
+    WarehouseID    NUMBER NOT NULL,
+    Qty            NUMBER NOT NULL,
+    TaskDate       DATE NOT NULL,
+    CONSTRAINT fk_task_product FOREIGN KEY (ProductID)
+        REFERENCES Products(ProductID),
+    CONSTRAINT fk_task_operator FOREIGN KEY (OperatorID)
+        REFERENCES Operators(OperatorID),
+    CONSTRAINT fk_task_warehouse FOREIGN KEY (WarehouseID)
+        REFERENCES Warehouses(WarehouseID)
+);
+
+------------------------------------------------------------
+-- WSTAWIANIE DANYCH
+------------------------------------------------------------
+
+-- PRODUCTS
+INSERT INTO Products VALUES (101, 'Paleta EURO', 'Palety', 25.0, 1);
+INSERT INTO Products VALUES (102, 'Karton duży', 'Opakowania', 1.2, 1);
+INSERT INTO Products VALUES (103, 'Karton mały', 'Opakowania', 0.6, 1);
+INSERT INTO Products VALUES (104, 'Folia stretch', 'Materiały', 2.0, 1);
+INSERT INTO Products VALUES (105, 'Taśma pakowa', 'Materiały', 0.3, 1);
+INSERT INTO Products VALUES (106, 'Skrzynka plastik', 'Pojemniki', 3.5, 1);
+INSERT INTO Products VALUES (107, 'Etykiety A5', 'Druk', 0.1, 0);
+
+-- WAREHOUSES
+INSERT INTO Warehouses VALUES (1, 'Magazyn Centralny', 'Katowice');
+INSERT INTO Warehouses VALUES (2, 'Magazyn Wschodni', 'Kraków');
+INSERT INTO Warehouses VALUES (3, 'Magazyn Zachodni', 'Wrocław');
+
+-- STOCK
+INSERT INTO Stock VALUES (101, 1, 120);
+INSERT INTO Stock VALUES (102, 1, 450);
+INSERT INTO Stock VALUES (103, 1, 300);
+INSERT INTO Stock VALUES (104, 1, 80);
+INSERT INTO Stock VALUES (105, 1, 200);
+INSERT INTO Stock VALUES (106, 1, 40);
+
+INSERT INTO Stock VALUES (101, 2, 60);
+INSERT INTO Stock VALUES (102, 2, 200);
+INSERT INTO Stock VALUES (103, 2, 150);
+INSERT INTO Stock VALUES (104, 2, 50);
+INSERT INTO Stock VALUES (105, 2, 120);
+INSERT INTO Stock VALUES (106, 2, 20);
+
+INSERT INTO Stock VALUES (101, 3, 30);
+INSERT INTO Stock VALUES (102, 3, 100);
+INSERT INTO Stock VALUES (103, 3, 80);
+INSERT INTO Stock VALUES (104, 3, 40);
+INSERT INTO Stock VALUES (105, 3, 60);
+INSERT INTO Stock VALUES (106, 3, 10);
+
+-- MOVEMENTS
+INSERT INTO Movements VALUES (1, 101, 1, +50, DATE '2024-01-01');
+INSERT INTO Movements VALUES (2, 101, 1, -20, DATE '2024-01-03');
+INSERT INTO Movements VALUES (3, 102, 1, +200, DATE '2024-01-02');
+INSERT INTO Movements VALUES (4, 102, 1, -50, DATE '2024-01-05');
+INSERT INTO Movements VALUES (5, 103, 1, +150, DATE '2024-01-04');
+INSERT INTO Movements VALUES (6, 103, 1, -30, DATE '2024-01-06');
+INSERT INTO Movements VALUES (7, 104, 2, +40, DATE '2024-01-02');
+INSERT INTO Movements VALUES (8, 104, 2, -10, DATE '2024-01-03');
+INSERT INTO Movements VALUES (9, 105, 2, +100, DATE '2024-01-01');
+INSERT INTO Movements VALUES (10, 105, 2, -20, DATE '2024-01-04');
+INSERT INTO Movements VALUES (11, 106, 3, +20, DATE '2024-01-02');
+INSERT INTO Movements VALUES (12, 106, 3, -5, DATE '2024-01-05');
+INSERT INTO Movements VALUES (13, 101, 3, +30, DATE '2024-01-07');
+INSERT INTO Movements VALUES (14, 102, 3, +100, DATE '2024-01-07');
+INSERT INTO Movements VALUES (15, 103, 3, -10, DATE '2024-01-08');
+
+-- OPERATORS
+INSERT INTO Operators VALUES (1, 'Jan Kowalski', 'A');
+INSERT INTO Operators VALUES (2, 'Anna Nowak', 'B');
+INSERT INTO Operators VALUES (3, 'Piotr Zielony', 'A');
+INSERT INTO Operators VALUES (4, 'Marek Biały', 'C');
+
+-- PICKINGTASKS
+INSERT INTO PickingTasks VALUES (1, 102, 1, 1, 20, DATE '2024-01-03');
+INSERT INTO PickingTasks VALUES (2, 103, 1, 1, 15, DATE '2024-01-03');
+INSERT INTO PickingTasks VALUES (3, 101, 2, 1, 10, DATE '2024-01-04');
+INSERT INTO PickingTasks VALUES (4, 105, 3, 2, 25, DATE '2024-01-05');
+INSERT INTO PickingTasks VALUES (5, 104, 4, 2, 5, DATE '2024-01-05');
+INSERT INTO PickingTasks VALUES (6, 106, 2, 3, 8, DATE '2024-01-06');
+INSERT INTO PickingTasks VALUES (7, 103, 3, 3, 12, DATE '2024-01-07');
+
+COMMIT;
