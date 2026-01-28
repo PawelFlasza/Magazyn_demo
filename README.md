@@ -22,15 +22,15 @@ Model obejmuje kluczowe obszary magazynu:
 🗄️ Struktura repozytorium
 PawelFlasza/
 └─ Magazyn_demo/
-   └─ 01_schema_and_seed_oracle.sql   # definicje tabel + dane testowe
-
+   └─ model_magazynu/
+      └─ 01_schema_and_seed_oracle.sql   # definicje tabel + dane testowe
 
 
 
 ▶️ Uruchamianie projektu
 - Uruchom środowisko Oracle (SQL*Plus, SQL Developer, DBeaver itp.).
 - Wykonaj skrypt:
-PawelFlasza/Magazyn_demo/01_schema_and_seed_oracle.sql
+PawelFlasza/Magazyn_demo/model_magazynu/01_schema_and_seed_oracle.sql
 
 
 - Po wykonaniu skryptu baza będzie zawierała:
